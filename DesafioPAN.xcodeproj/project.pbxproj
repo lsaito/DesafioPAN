@@ -15,6 +15,9 @@
 		6087C607217946D900029C1E /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 6087C605217946D900029C1E /* LaunchScreen.storyboard */; };
 		6087C612217946D900029C1E /* DesafioPANTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6087C611217946D900029C1E /* DesafioPANTests.swift */; };
 		6087C61D217946D900029C1E /* DesafioPANUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6087C61C217946D900029C1E /* DesafioPANUITests.swift */; };
+		6087C62C2179680900029C1E /* CollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6087C62A2179680900029C1E /* CollectionViewCell.swift */; };
+		6087C62E2179681900029C1E /* CollectionViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6087C6302179681900029C1E /* CollectionViewCell.xib */; };
+		6087C63321796A0F00029C1E /* Repository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6087C63221796A0F00029C1E /* Repository.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -49,6 +52,9 @@
 		6087C618217946D900029C1E /* DesafioPANUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DesafioPANUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		6087C61C217946D900029C1E /* DesafioPANUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DesafioPANUITests.swift; sourceTree = "<group>"; };
 		6087C61E217946D900029C1E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		6087C62A2179680900029C1E /* CollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionViewCell.swift; sourceTree = "<group>"; };
+		6087C62F2179681900029C1E /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/CollectionViewCell.xib; sourceTree = "<group>"; };
+		6087C63221796A0F00029C1E /* Repository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Repository.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -106,6 +112,8 @@
 				6087C605217946D900029C1E /* LaunchScreen.storyboard */,
 				6087C608217946D900029C1E /* Info.plist */,
 				6087C600217946D800029C1E /* DesafioPAN.xcdatamodeld */,
+				6087C631217969E600029C1E /* CustomView */,
+				6087C63221796A0F00029C1E /* Repository.swift */,
 			);
 			path = DesafioPAN;
 			sourceTree = "<group>";
@@ -126,6 +134,15 @@
 				6087C61E217946D900029C1E /* Info.plist */,
 			);
 			path = DesafioPANUITests;
+			sourceTree = "<group>";
+		};
+		6087C631217969E600029C1E /* CustomView */ = {
+			isa = PBXGroup;
+			children = (
+				6087C62A2179680900029C1E /* CollectionViewCell.swift */,
+				6087C6302179681900029C1E /* CollectionViewCell.xib */,
+			);
+			path = CustomView;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -234,6 +251,7 @@
 			files = (
 				6087C607217946D900029C1E /* LaunchScreen.storyboard in Resources */,
 				6087C604217946D900029C1E /* Assets.xcassets in Resources */,
+				6087C62E2179681900029C1E /* CollectionViewCell.xib in Resources */,
 				6087C5FF217946D800029C1E /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -261,6 +279,8 @@
 			files = (
 				6087C5FC217946D800029C1E /* ViewController.swift in Sources */,
 				6087C5FA217946D800029C1E /* AppDelegate.swift in Sources */,
+				6087C63321796A0F00029C1E /* Repository.swift in Sources */,
+				6087C62C2179680900029C1E /* CollectionViewCell.swift in Sources */,
 				6087C602217946D800029C1E /* DesafioPAN.xcdatamodeld in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -311,6 +331,14 @@
 				6087C606217946D900029C1E /* Base */,
 			);
 			name = LaunchScreen.storyboard;
+			sourceTree = "<group>";
+		};
+		6087C6302179681900029C1E /* CollectionViewCell.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				6087C62F2179681900029C1E /* Base */,
+			);
+			name = CollectionViewCell.xib;
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */
