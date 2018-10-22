@@ -17,6 +17,7 @@ private let sectionInsets = UIEdgeInsets(top: 50.0, left: 20.0, bottom: 50.0, ri
 
 class TopFilmesViewController: UICollectionViewController {
     var interactor: TopFilmesInteractorProtocol?
+    var viewModel: TopFilmes.DiscoverMovies.ViewModel?
     
     // MARK: Object lifecycle
     
@@ -52,20 +53,14 @@ class TopFilmesViewController: UICollectionViewController {
         // self.clearsSelectionOnViewWillAppear = false
 
         // Register cell classes
-        self.collectionView!.register(UICollectionViewCell.self, forCellWithReuseIdentifier: reuseIdentifier)
+        self.collectionView!.register(UINib(nibName: "FilmeCell", bundle: nil), forCellWithReuseIdentifier: reuseIdentifier)
 
         // Do any additional setup after loading the view.
-        doTopFilmes()
+        loadTopFilmes()
     }
     
-    func doTopFilmes() {
-        let request = TopFilmes.DiscoverMovies.Request.init(
-            language: "en-US",
-            sort_by: "popularity.desc",
-            include_adult: false,
-            include_video: false,
-            page: 1
-        )
+    func loadTopFilmes() {
+        let request = TopFilmes.DiscoverMovies.Request()
         interactor?.fetchTopFilmes(request: request)
     }
 
@@ -83,19 +78,21 @@ class TopFilmesViewController: UICollectionViewController {
 
     override func numberOfSections(in collectionView: UICollectionView) -> Int {
         // #warning Incomplete implementation, return the number of sections
-        return 0
+        return 1
     }
 
 
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         // #warning Incomplete implementation, return the number of items
-        return 0
+        return self.viewModel?.moviesCollection?.count ?? 0
     }
 
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: reuseIdentifier, for: indexPath)
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: reuseIdentifier, for: indexPath) as! FilmeCell
     
         // Configure the cell
+        let filmeCollection = self.filmeForIndexPath(indexPath: indexPath)
+        cell.setCell(imageURL: filmeCollection.imageURL, title: filmeCollection.title)
     
         return cell
     }
@@ -130,11 +127,27 @@ class TopFilmesViewController: UICollectionViewController {
     
     }
     */
+}
 
+extension TopFilmesViewController: UICollectionViewDelegateFlowLayout {
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        let padding: CGFloat = 50
+        let collectionViewSize = collectionView.frame.size.width - padding
+        let width = collectionViewSize/3
+        let cell = self.collectionView(collectionView, cellForItemAt: indexPath)
+        let cellSize = cell.contentView.frame.size
+        let height = (150 / 100) * width
+        
+        return CGSize(width: width, height: height)
+    }
 }
 
 extension TopFilmesViewController: TopFilmesViewControllerProtocol {
     func displayTopFilmes(viewModel: TopFilmes.DiscoverMovies.ViewModel) {
-        
+        self.viewModel = viewModel
+        self.collectionView.reloadData()
+    }
+    func filmeForIndexPath(indexPath: IndexPath) -> TopFilmes.MovieCollectionItem {
+        return (viewModel?.moviesCollection?[(indexPath as IndexPath).row])!
     }
 }

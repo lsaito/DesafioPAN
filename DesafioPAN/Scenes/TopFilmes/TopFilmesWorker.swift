@@ -9,17 +9,17 @@
 import Foundation
 
 class TopFilmesWorker {
-    func fetchTopFilmes(request: TopFilmes.DiscoverMovies.Request, completionHandler: @escaping (TopFilmes.DiscoverMovies.Response) -> Void)
+    func fetchDiscoverMovie(request: TheMovieDB.DiscoverMovie.Request, completionHandler: @escaping (TheMovieDB.DiscoverMovie.Response) -> Void)
     {
         let parameters = request.toDictionary()
-        let urlRequest = Repository.getURLRequest(endpoint: "/discover/movie", parameters: parameters)
+        let urlRequest = TheMovieDB.shared.getURLRequest(endpoint: "/discover/movie", parameters: parameters)
         var request = URLRequest(url: URL(string: urlRequest)!)
         request.httpMethod = "GET"
         
         URLSession.shared.dataTask(with: request, completionHandler: { data, response, error -> Void in
             do {
                 let jsonDecoder = JSONDecoder()
-                let responseModel = try jsonDecoder.decode(TopFilmes.DiscoverMovies.Response.self, from: data!)
+                let responseModel = try jsonDecoder.decode(TheMovieDB.DiscoverMovie.Response.self, from: data!)
                 
                 DispatchQueue.main.async {
                     completionHandler(responseModel)

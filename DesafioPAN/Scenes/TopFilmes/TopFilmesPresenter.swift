@@ -16,7 +16,19 @@ class TopFilmesPresenter: TopFilmesPresenterProtocol {
     weak var viewController: TopFilmesViewControllerProtocol?
     
     func presentFetchedTopFilmes(response: TopFilmes.DiscoverMovies.Response) {
-        let viewModel = TopFilmes.DiscoverMovies.ViewModel()
+        var moviesCollection: [TopFilmes.MovieCollectionItem]? = []
+        
+        if let movies = response.moviesList {
+            for movie in movies {
+                let movieItem = TopFilmes.MovieCollectionItem.init(
+                    imageURL: movie.imageURL,
+                    title: movie.title
+                )
+                moviesCollection?.append(movieItem)
+            }
+        }
+        
+        let viewModel = TopFilmes.DiscoverMovies.ViewModel.init(moviesCollection: moviesCollection)
         viewController?.displayTopFilmes(viewModel: viewModel)
     }
 }

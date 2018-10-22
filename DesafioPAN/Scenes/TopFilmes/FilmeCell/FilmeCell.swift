@@ -8,24 +8,19 @@
 
 import UIKit
 
-class CollectionViewCell: UICollectionViewCell {
+class FilmeCell: UICollectionViewCell {
     
     @IBOutlet weak var imageView: UIImageView!
     @IBOutlet weak var titleLabel: UILabel!
     
-    var image: UIImage?
-    var title: String?
-    
     override func awakeFromNib() {
         super.awakeFromNib()
         // Initialization code
-        imageView.image = image
-        titleLabel.text = title
     }
     
-    func setCell(image: UIImage, title: String) {
-        self.image = image
-        self.title = title
+    func setCell(imageURL: String?, title: String?) {
+        imageView.loadImageUsingCache(withUrl: imageURL!)
+        titleLabel.text = title
     }
 
 }

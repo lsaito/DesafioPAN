@@ -10,23 +10,28 @@ import Foundation
 
 enum TopFilmes {
     enum DiscoverMovies {
-        struct Request: Serializable {
-            var language: String
-            var sort_by: String
-            var include_adult: Bool
-            var include_video: Bool
-            var page: Int
+        struct Request {
+            
         }
         
-        struct Response: Decodable {
-            let page: Int?
-            let results: [Movie]?
-            let total_results: Int?
-            let total_pages: Int?
+        struct Response {
+            let moviesList: [TopFilmes.MovieListItem]?
         }
         
         struct ViewModel {
-            
+            let moviesCollection: [TopFilmes.MovieCollectionItem]?
         }
+    }
+    
+    struct MovieListItem {
+        let imageURL: String?
+        let title: String?
+        let vote_count: Int?
+        let popularity: Double?
+    }
+    
+    struct MovieCollectionItem {
+        let imageURL: String?
+        let title: String?
     }
 }
