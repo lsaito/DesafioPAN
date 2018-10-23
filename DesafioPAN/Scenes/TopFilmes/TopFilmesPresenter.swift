@@ -19,16 +19,19 @@ class TopFilmesPresenter: TopFilmesPresenterProtocol {
         var moviesCollection: [TopFilmes.MovieCollectionItem]? = []
         
         if let movies = response.moviesList {
-            for movie in movies {
-                let movieItem = TopFilmes.MovieCollectionItem.init(
-                    imageURL: movie.imageURL,
-                    title: movie.title
-                )
-                moviesCollection?.append(movieItem)
-            }
+            TheMovieDB.shared.getConfiguration(completionHandler: { (configuration) in
+                if let configImg = configuration.images, let baseUrlImage = configImg.secure_base_url, let sizes = configImg.poster_sizes, let size = sizes.first {
+                    for movie in movies {
+                        let movieItem = TopFilmes.MovieCollectionItem.init(
+                            imageURL: baseUrlImage + size + (movie.poster_path ?? ""),
+                            title: movie.title
+                        )
+                        moviesCollection?.append(movieItem)
+                    }
+                    let viewModel = TopFilmes.DiscoverMovies.ViewModel.init(moviesCollection: moviesCollection)
+                    self.viewController?.displayTopFilmes(viewModel: viewModel)
+                }
+            })
         }
-        
-        let viewModel = TopFilmes.DiscoverMovies.ViewModel.init(moviesCollection: moviesCollection)
-        viewController?.displayTopFilmes(viewModel: viewModel)
     }
 }

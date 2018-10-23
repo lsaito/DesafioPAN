@@ -15,19 +15,12 @@ enum TopFilmes {
         }
         
         struct Response {
-            let moviesList: [TopFilmes.MovieListItem]?
+            let moviesList: [Movie]?
         }
         
         struct ViewModel {
             let moviesCollection: [TopFilmes.MovieCollectionItem]?
         }
-    }
-    
-    struct MovieListItem {
-        let imageURL: String?
-        let title: String?
-        let vote_count: Int?
-        let popularity: Double?
     }
     
     struct MovieCollectionItem {

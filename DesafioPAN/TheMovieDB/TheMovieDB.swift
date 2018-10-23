@@ -13,13 +13,7 @@ class TheMovieDB {
     
     let baseURL = "https://api.themoviedb.org/3"
     let api_key = "271253d65cac98d5079059c725fed688"
-    var configuration: TheMovieDB.Configuration.Response!
-    
-    private init() {
-        self.fetchConfiguration(request: TheMovieDB.Configuration.Request()) { (response) in
-            self.configuration = response
-        }
-    }
+    private var configuration: TheMovieDB.Configuration.Response!
     
     func getURLRequest(endpoint: String, parameters: [String: Any]? = [:]) -> String {
         var URLRequest = ""
@@ -67,5 +61,16 @@ class TheMovieDB {
                 print(error)
             }
         }).resume()
+    }
+    
+    func getConfiguration(completionHandler: @escaping (TheMovieDB.Configuration.Response) -> Void) {
+        if (self.configuration != nil) {
+            completionHandler(self.configuration)
+        } else {
+            self.fetchConfiguration(request: TheMovieDB.Configuration.Request()) { (response) in
+                self.configuration = response
+                completionHandler(self.configuration)
+            }
+        }
     }
 }

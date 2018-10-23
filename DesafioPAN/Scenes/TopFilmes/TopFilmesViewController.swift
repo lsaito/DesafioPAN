@@ -17,7 +17,13 @@ private let sectionInsets = UIEdgeInsets(top: 50.0, left: 20.0, bottom: 50.0, ri
 
 class TopFilmesViewController: UICollectionViewController {
     var interactor: TopFilmesInteractorProtocol?
-    var viewModel: TopFilmes.DiscoverMovies.ViewModel?
+    private var viewModel: TopFilmes.DiscoverMovies.ViewModel? {
+        didSet {
+            self.collectionView.reloadData()
+        }
+    }
+    private var isLoadingData: Bool = false
+    private var isStartScroll: Bool = false
     
     // MARK: Object lifecycle
     
@@ -60,6 +66,7 @@ class TopFilmesViewController: UICollectionViewController {
     }
     
     func loadTopFilmes() {
+        self.isLoadingData = true
         let request = TopFilmes.DiscoverMovies.Request()
         interactor?.fetchTopFilmes(request: request)
     }
@@ -127,6 +134,19 @@ class TopFilmesViewController: UICollectionViewController {
     
     }
     */
+    
+    override func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
+        if let vm = self.viewModel, let list = vm.moviesCollection {
+            if indexPath.row == list.count - 2 && !isLoadingData && isStartScroll {
+                isStartScroll = false
+                loadTopFilmes()
+            }
+        }
+    }
+    
+    override func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        self.isStartScroll = true
+    }
 }
 
 extension TopFilmesViewController: UICollectionViewDelegateFlowLayout {
@@ -145,7 +165,7 @@ extension TopFilmesViewController: UICollectionViewDelegateFlowLayout {
 extension TopFilmesViewController: TopFilmesViewControllerProtocol {
     func displayTopFilmes(viewModel: TopFilmes.DiscoverMovies.ViewModel) {
         self.viewModel = viewModel
-        self.collectionView.reloadData()
+        self.isLoadingData = false
     }
     func filmeForIndexPath(indexPath: IndexPath) -> TopFilmes.MovieCollectionItem {
         return (viewModel?.moviesCollection?[(indexPath as IndexPath).row])!

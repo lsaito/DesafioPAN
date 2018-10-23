@@ -20,7 +20,7 @@ class TopFilmesInteractor: TopFilmesInteractorProtocol, TopFilmesDataStore {
     var worker: TopFilmesWorker?
     var presenter: TopFilmesPresenterProtocol?
     var currentPage: Int = 0
-    var moviesList: [TopFilmes.MovieListItem]? = []
+    var moviesList: [Movie]? = []
     
     func fetchTopFilmes(request: TopFilmes.DiscoverMovies.Request) {
         let requestAPI = TheMovieDB.DiscoverMovie.Request.init(
@@ -36,21 +36,16 @@ class TopFilmesInteractor: TopFilmesInteractorProtocol, TopFilmesDataStore {
             if (self.currentPage + 1 == responseAPI.page) {
                 self.currentPage = responseAPI.page!
                 if let movies = responseAPI.results {
-                    if let baseUrlImage = TheMovieDB.shared.configuration.images?.secure_base_url, let size = TheMovieDB.shared.configuration.images?.poster_sizes?.first {
-                        for movie in movies {
-                            let movieItem = TopFilmes.MovieListItem.init(
-                                imageURL: baseUrlImage + size + (movie.poster_path ?? ""),
-                                title: movie.title,
-                                vote_count: movie.vote_count,
-                                popularity: movie.popularity
-                            )
-                            self.moviesList?.append(movieItem)
-                        }
-                    }
+                    self.moviesList?.append(contentsOf: movies)
                 }
             }
             let response = TopFilmes.DiscoverMovies.Response.init(moviesList: self.moviesList)
             self.presenter?.presentFetchedTopFilmes(response: response)
         })
+    }
+    
+    func refreshData() {
+        self.currentPage = 0
+        self.moviesList = []
     }
 }
