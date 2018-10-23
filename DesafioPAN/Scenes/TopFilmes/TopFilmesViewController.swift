@@ -24,6 +24,7 @@ class TopFilmesViewController: UICollectionViewController {
     }
     private var isLoadingData: Bool = false
     private var isStartScroll: Bool = false
+    private let refreshControl = UIRefreshControl()
     
     // MARK: Object lifecycle
     
@@ -62,12 +63,32 @@ class TopFilmesViewController: UICollectionViewController {
         self.collectionView!.register(UINib(nibName: "FilmeCell", bundle: nil), forCellWithReuseIdentifier: reuseIdentifier)
 
         // Do any additional setup after loading the view.
+        setupCollectionView()
+    }
+    
+    func setupCollectionView() {
+        // Add Refresh Control to Collection View
+        if #available(iOS 10.0, *) {
+            self.collectionView.refreshControl = refreshControl
+        } else {
+            self.collectionView.addSubview(refreshControl)
+        }
+        // Configure Refresh Control
+        refreshControl.addTarget(self, action: #selector(refreshData(_:)), for: .valueChanged)
+        
         loadTopFilmes()
     }
     
-    func loadTopFilmes() {
+    @objc private func refreshData(_ sender: Any) {
+        // Fetch Data
         self.isLoadingData = true
-        let request = TopFilmes.DiscoverMovies.Request()
+        let request = TopFilmes.DiscoverMovies.Request.init(isRefresh: true)
+        interactor?.refreshData(request: request)
+    }
+    
+    private func loadTopFilmes() {
+        self.isLoadingData = true
+        let request = TopFilmes.DiscoverMovies.Request.init(isRefresh: false)
         interactor?.fetchTopFilmes(request: request)
     }
 
@@ -166,6 +187,9 @@ extension TopFilmesViewController: TopFilmesViewControllerProtocol {
     func displayTopFilmes(viewModel: TopFilmes.DiscoverMovies.ViewModel) {
         self.viewModel = viewModel
         self.isLoadingData = false
+        if (viewModel.isRefresh!) {
+            self.refreshControl.endRefreshing()
+        }
     }
     func filmeForIndexPath(indexPath: IndexPath) -> TopFilmes.MovieCollectionItem {
         return (viewModel?.moviesCollection?[(indexPath as IndexPath).row])!

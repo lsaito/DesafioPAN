@@ -28,7 +28,7 @@ class TopFilmesPresenter: TopFilmesPresenterProtocol {
                         )
                         moviesCollection?.append(movieItem)
                     }
-                    let viewModel = TopFilmes.DiscoverMovies.ViewModel.init(moviesCollection: moviesCollection)
+                    let viewModel = TopFilmes.DiscoverMovies.ViewModel.init(isRefresh: response.isRefresh, moviesCollection: moviesCollection)
                     self.viewController?.displayTopFilmes(viewModel: viewModel)
                 }
             })

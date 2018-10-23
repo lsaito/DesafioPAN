@@ -10,6 +10,7 @@ import Foundation
 
 protocol TopFilmesInteractorProtocol {
     func fetchTopFilmes(request: TopFilmes.DiscoverMovies.Request)
+    func refreshData(request: TopFilmes.DiscoverMovies.Request)
 }
 
 protocol TopFilmesDataStore {
@@ -39,13 +40,15 @@ class TopFilmesInteractor: TopFilmesInteractorProtocol, TopFilmesDataStore {
                     self.moviesList?.append(contentsOf: movies)
                 }
             }
-            let response = TopFilmes.DiscoverMovies.Response.init(moviesList: self.moviesList)
+            let response = TopFilmes.DiscoverMovies.Response.init(isRefresh: request.isRefresh, moviesList: self.moviesList)
             self.presenter?.presentFetchedTopFilmes(response: response)
         })
     }
     
-    func refreshData() {
+    func refreshData(request: TopFilmes.DiscoverMovies.Request) {
         self.currentPage = 0
         self.moviesList = []
+        
+        self.fetchTopFilmes(request: request)
     }
 }
