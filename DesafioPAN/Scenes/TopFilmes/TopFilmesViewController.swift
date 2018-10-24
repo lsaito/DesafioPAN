@@ -16,11 +16,18 @@ protocol TopFilmesViewControllerProtocol: class {
 private let reuseIdentifier = "FilmeCell"
 private let sectionInsets = UIEdgeInsets(top: 50.0, left: 20.0, bottom: 50.0, right: 20.0)
 
-class TopFilmesViewController: UICollectionViewController {
+class TopFilmesViewController: UIViewController {
+    
+    
+    @IBOutlet weak var collectionView: UICollectionView!
+    @IBOutlet weak var messageTopView: UIView!
+    
     var interactor: TopFilmesInteractorProtocol?
     private var viewModel: TopFilmes.DiscoverMovies.ViewModel? {
         didSet {
-            self.collectionView.reloadData()
+            DispatchQueue.main.async {
+                self.collectionView.reloadData()
+            }
         }
     }
     private var isLoadingData: Bool = false
@@ -102,62 +109,66 @@ class TopFilmesViewController: UICollectionViewController {
         // Pass the selected object to the new view controller.
     }
     */
+}
 
+extension TopFilmesViewController: UICollectionViewDataSource {
     // MARK: UICollectionViewDataSource
-
-    override func numberOfSections(in collectionView: UICollectionView) -> Int {
+    
+    func numberOfSections(in collectionView: UICollectionView) -> Int {
         // #warning Incomplete implementation, return the number of sections
         return 1
     }
-
-
-    override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+    
+    
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         // #warning Incomplete implementation, return the number of items
         return self.viewModel?.moviesCollection?.count ?? 0
     }
-
-    override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: reuseIdentifier, for: indexPath) as! FilmeCell
     
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: reuseIdentifier, for: indexPath) as! FilmeCell
+        
         // Configure the cell
         let filmeCollection = self.filmeForIndexPath(indexPath: indexPath)
         cell.setCell(imageURL: filmeCollection.imageURL, title: filmeCollection.title)
-    
+        
         return cell
     }
+}
 
+extension TopFilmesViewController: UICollectionViewDelegate {
     // MARK: UICollectionViewDelegate
-
-    /*
-    // Uncomment this method to specify if the specified item should be highlighted during tracking
-    override func collectionView(_ collectionView: UICollectionView, shouldHighlightItemAt indexPath: IndexPath) -> Bool {
-        return true
-    }
-    */
-
-    /*
-    // Uncomment this method to specify if the specified item should be selected
-    override func collectionView(_ collectionView: UICollectionView, shouldSelectItemAt indexPath: IndexPath) -> Bool {
-        return true
-    }
-    */
-
-    /*
-    // Uncomment these methods to specify if an action menu should be displayed for the specified item, and react to actions performed on the item
-    override func collectionView(_ collectionView: UICollectionView, shouldShowMenuForItemAt indexPath: IndexPath) -> Bool {
-        return false
-    }
-
-    override func collectionView(_ collectionView: UICollectionView, canPerformAction action: Selector, forItemAt indexPath: IndexPath, withSender sender: Any?) -> Bool {
-        return false
-    }
-
-    override func collectionView(_ collectionView: UICollectionView, performAction action: Selector, forItemAt indexPath: IndexPath, withSender sender: Any?) {
     
-    }
-    */
+    /*
+     // Uncomment this method to specify if the specified item should be highlighted during tracking
+     override func collectionView(_ collectionView: UICollectionView, shouldHighlightItemAt indexPath: IndexPath) -> Bool {
+     return true
+     }
+     */
     
-    override func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
+    /*
+     // Uncomment this method to specify if the specified item should be selected
+     override func collectionView(_ collectionView: UICollectionView, shouldSelectItemAt indexPath: IndexPath) -> Bool {
+     return true
+     }
+     */
+    
+    /*
+     // Uncomment these methods to specify if an action menu should be displayed for the specified item, and react to actions performed on the item
+     override func collectionView(_ collectionView: UICollectionView, shouldShowMenuForItemAt indexPath: IndexPath) -> Bool {
+     return false
+     }
+     
+     override func collectionView(_ collectionView: UICollectionView, canPerformAction action: Selector, forItemAt indexPath: IndexPath, withSender sender: Any?) -> Bool {
+     return false
+     }
+     
+     override func collectionView(_ collectionView: UICollectionView, performAction action: Selector, forItemAt indexPath: IndexPath, withSender sender: Any?) {
+     
+     }
+     */
+    
+    func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
         if let vm = self.viewModel, let list = vm.moviesCollection {
             if indexPath.row == list.count - 2 && !isLoadingData && isStartScroll {
                 isStartScroll = false
@@ -165,8 +176,10 @@ class TopFilmesViewController: UICollectionViewController {
             }
         }
     }
-    
-    override func scrollViewDidScroll(_ scrollView: UIScrollView) {
+}
+
+extension TopFilmesViewController: UIScrollViewDelegate {
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
         self.isStartScroll = true
     }
 }
@@ -188,17 +201,14 @@ extension TopFilmesViewController: TopFilmesViewControllerProtocol {
     func displayTopFilmes(viewModel: TopFilmes.DiscoverMovies.ViewModel) {
         self.viewModel = viewModel
         self.isLoadingData = false
+        self.messageTopView.isHidden = true
         if (viewModel.isRefresh!) {
             self.refreshControl.endRefreshing()
         }
     }
     func displayOfflineMessage() {
         DispatchQueue.main.async {
-            let mensagemOffline = UILabel(frame: CGRect(x: 0, y: 0, width: self.view.frame.size.width, height: 50))
-            mensagemOffline.text = "Sem conexão no momento, mostrando dados off-line"
-            mensagemOffline.backgroundColor = UIColor(white: 0, alpha: 0.3)
-            mensagemOffline.textColor = UIColor(white: 1, alpha: 1)
-            self.collectionView.addSubview(mensagemOffline)
+            self.messageTopView.isHidden = false
         }
     }
     func filmeForIndexPath(indexPath: IndexPath) -> TopFilmes.MovieCollectionItem {
