@@ -9,7 +9,7 @@
 import Foundation
 
 class TopFilmesWorker {
-    func fetchDiscoverMovie(request: TheMovieDB.DiscoverMovie.Request, completionHandler: @escaping (TheMovieDB.DiscoverMovie.Response) -> Void)
+    func fetchDiscoverMovie(request: TheMovieDB.DiscoverMovie.Request, completionSuccess: @escaping (TheMovieDB.DiscoverMovie.Response) -> Void, completionError: @escaping (Error) -> Void)
     {
         let parameters = request.toDictionary()
         let urlRequest = TheMovieDB.shared.getURLRequest(endpoint: "/discover/movie", parameters: parameters)
@@ -17,16 +17,21 @@ class TopFilmesWorker {
         request.httpMethod = "GET"
         
         URLSession.shared.dataTask(with: request, completionHandler: { data, response, error -> Void in
-            do {
-                let jsonDecoder = JSONDecoder()
-                let responseModel = try jsonDecoder.decode(TheMovieDB.DiscoverMovie.Response.self, from: data!)
-                
-                DispatchQueue.main.async {
-                    completionHandler(responseModel)
+            if let error = error {
+                completionError(error)
+            } else {
+                guard let data = data else { return }
+                do {
+                    let jsonDecoder = JSONDecoder()
+                    let responseModel = try jsonDecoder.decode(TheMovieDB.DiscoverMovie.Response.self, from: data)
+                    
+                    DispatchQueue.main.async {
+                        completionSuccess(responseModel)
+                    }
+                } catch {
+                    print("JSON Serialization error")
+                    print(error)
                 }
-            } catch {
-                print("JSON Serialization error")
-                print(error)
             }
         }).resume()
     }

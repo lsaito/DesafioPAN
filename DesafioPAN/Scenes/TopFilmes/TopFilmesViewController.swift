@@ -10,6 +10,7 @@ import UIKit
 
 protocol TopFilmesViewControllerProtocol: class {
     func displayTopFilmes(viewModel: TopFilmes.DiscoverMovies.ViewModel)
+    func displayOfflineMessage()
 }
 
 private let reuseIdentifier = "FilmeCell"
@@ -189,6 +190,15 @@ extension TopFilmesViewController: TopFilmesViewControllerProtocol {
         self.isLoadingData = false
         if (viewModel.isRefresh!) {
             self.refreshControl.endRefreshing()
+        }
+    }
+    func displayOfflineMessage() {
+        DispatchQueue.main.async {
+            let mensagemOffline = UILabel(frame: CGRect(x: 0, y: 0, width: self.view.frame.size.width, height: 50))
+            mensagemOffline.text = "Sem conexão no momento, mostrando dados off-line"
+            mensagemOffline.backgroundColor = UIColor(white: 0, alpha: 0.3)
+            mensagemOffline.textColor = UIColor(white: 1, alpha: 1)
+            self.collectionView.addSubview(mensagemOffline)
         }
     }
     func filmeForIndexPath(indexPath: IndexPath) -> TopFilmes.MovieCollectionItem {
