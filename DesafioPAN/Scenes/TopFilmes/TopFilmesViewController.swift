@@ -15,6 +15,7 @@ protocol TopFilmesViewControllerProtocol: class {
 
 private let reuseIdentifier = "FilmeCell"
 private let sectionInsets = UIEdgeInsets(top: 50.0, left: 20.0, bottom: 50.0, right: 20.0)
+private let itemsPerRow: CGFloat = 3
 
 class TopFilmesViewController: UIViewController {
     
@@ -31,7 +32,6 @@ class TopFilmesViewController: UIViewController {
         }
     }
     private var isLoadingData: Bool = false
-    private var isStartScroll: Bool = false
     private let refreshControl = UIRefreshControl()
     
     // MARK: Object lifecycle
@@ -68,7 +68,7 @@ class TopFilmesViewController: UIViewController {
         // self.clearsSelectionOnViewWillAppear = false
 
         // Register cell classes
-        self.collectionView!.register(UINib(nibName: "FilmeCell", bundle: nil), forCellWithReuseIdentifier: reuseIdentifier)
+//        self.collectionView!.register(FilmeCell.self, forCellWithReuseIdentifier: reuseIdentifier)
 
         // Do any additional setup after loading the view.
         setupCollectionView()
@@ -130,7 +130,8 @@ extension TopFilmesViewController: UICollectionViewDataSource {
         
         // Configure the cell
         let filmeCollection = self.filmeForIndexPath(indexPath: indexPath)
-        cell.setCell(imageURL: filmeCollection.imageURL, title: filmeCollection.title)
+        cell.imageView.loadImageUsingCache(withUrl: filmeCollection.imageURL)
+        cell.titleLabel.text = filmeCollection.title
         
         return cell
     }
@@ -170,30 +171,29 @@ extension TopFilmesViewController: UICollectionViewDelegate {
     
     func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
         if let vm = self.viewModel, let list = vm.moviesCollection {
-            if indexPath.row == list.count - 2 && !isLoadingData && isStartScroll {
-                isStartScroll = false
+            if indexPath.row == list.count - 2 && !isLoadingData {
                 loadTopFilmes()
             }
         }
     }
 }
 
-extension TopFilmesViewController: UIScrollViewDelegate {
-    func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        self.isStartScroll = true
-    }
-}
-
 extension TopFilmesViewController: UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        let padding: CGFloat = 50
-        let collectionViewSize = collectionView.frame.size.width - padding
-        let width = collectionViewSize/3
-        let cell = self.collectionView(collectionView, cellForItemAt: indexPath)
-        let cellSize = cell.contentView.frame.size
-        let height = (150 / 100) * width
+        let paddingSpace = sectionInsets.left * (itemsPerRow + 1)
+        let availableWidth = view.frame.width - paddingSpace
+        let widthPerItem = availableWidth / itemsPerRow
+        let heightPerItem = widthPerItem * (150 / 100)
         
-        return CGSize(width: width, height: height)
+        return CGSize(width: widthPerItem, height: heightPerItem)
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
+        return sectionInsets
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
+        return sectionInsets.left
     }
 }
 

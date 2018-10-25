@@ -12,15 +12,5 @@ class FilmeCell: UICollectionViewCell {
     
     @IBOutlet weak var imageView: UIImageView!
     @IBOutlet weak var titleLabel: UILabel!
-    
-    override func awakeFromNib() {
-        super.awakeFromNib()
-        // Initialization code
-    }
-    
-    func setCell(imageURL: String?, title: String?) {
-        imageView.loadImageUsingCache(withUrl: imageURL!)
-        titleLabel.text = title
-    }
 
 }

@@ -45,7 +45,7 @@ class TopFilmesPresenter: TopFilmesPresenterProtocol {
                     for movie in movies {
                         let movieItem = TopFilmes.MovieCollectionItem.init(
                             imageURL: baseUrlImage + size + (movie.poster_path ?? ""),
-                            title: movie.title
+                            title: movie.title ?? ""
                         )
                         moviesCollection?.append(movieItem)
                     }

@@ -26,7 +26,7 @@ enum TopFilmes {
     }
     
     struct MovieCollectionItem {
-        let imageURL: String?
-        let title: String?
+        let imageURL: String!
+        let title: String!
     }
 }
