@@ -11,6 +11,8 @@ import UIKit
 protocol TopFilmesViewControllerProtocol: class {
     func displayTopFilmes(viewModel: TopFilmes.DiscoverMovies.ViewModel)
     func displayOfflineMessage()
+    func hideOfflineMessage()
+    func endRefreshData()
 }
 
 private let reuseIdentifier = "FilmeCell"
@@ -29,7 +31,6 @@ class TopFilmesViewController: UIViewController {
             self.collectionView.reloadData()
         }
     }
-    private var isLoadingData: Bool = false
     private let refreshControl = UIRefreshControl()
     
     // MARK: Object lifecycle
@@ -87,14 +88,12 @@ class TopFilmesViewController: UIViewController {
     
     @objc private func refreshData(_ sender: Any) {
         // Fetch Data
-        self.isLoadingData = true
-        let request = TopFilmes.DiscoverMovies.Request.init(isRefresh: true)
+        let request = TopFilmes.DiscoverMovies.Request.init()
         interactor?.refreshData(request: request)
     }
     
     private func loadTopFilmes() {
-        self.isLoadingData = true
-        let request = TopFilmes.DiscoverMovies.Request.init(isRefresh: false)
+        let request = TopFilmes.DiscoverMovies.Request.init()
         interactor?.fetchTopFilmes(request: request)
     }
 
@@ -133,6 +132,10 @@ extension TopFilmesViewController: UICollectionViewDataSource {
         
         return cell
     }
+    
+    private func filmeForIndexPath(indexPath: IndexPath) -> TopFilmes.MovieCollectionItem {
+        return (viewModel?.moviesCollection?[(indexPath as IndexPath).row])!
+    }
 }
 
 extension TopFilmesViewController: UICollectionViewDelegate {
@@ -169,7 +172,7 @@ extension TopFilmesViewController: UICollectionViewDelegate {
     
     func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
         if let vm = self.viewModel, let list = vm.moviesCollection {
-            if indexPath.row == list.count - 2 && !isLoadingData {
+            if indexPath.row == list.count - 2 {
                 loadTopFilmes()
             }
         }
@@ -198,16 +201,14 @@ extension TopFilmesViewController: UICollectionViewDelegateFlowLayout {
 extension TopFilmesViewController: TopFilmesViewControllerProtocol {
     func displayTopFilmes(viewModel: TopFilmes.DiscoverMovies.ViewModel) {
         self.viewModel = viewModel
-        self.isLoadingData = false
-        self.messageTopView.isHidden = true
-        if (viewModel.isRefresh!) {
-            self.refreshControl.endRefreshing()
-        }
     }
     func displayOfflineMessage() {
         self.messageTopView.isHidden = false
     }
-    func filmeForIndexPath(indexPath: IndexPath) -> TopFilmes.MovieCollectionItem {
-        return (viewModel?.moviesCollection?[(indexPath as IndexPath).row])!
+    func hideOfflineMessage() {
+        self.messageTopView.isHidden = true
+    }
+    func endRefreshData() {
+        self.refreshControl.endRefreshing()
     }
 }

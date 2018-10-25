@@ -11,16 +11,13 @@ import Foundation
 enum TopFilmes {
     enum DiscoverMovies {
         struct Request {
-            let isRefresh: Bool?
         }
         
         struct Response {
-            let isRefresh: Bool?
             let moviesList: [Movie]?
         }
         
         struct ViewModel {
-            let isRefresh: Bool?
             let moviesCollection: [TopFilmes.MovieCollectionItem]?
         }
     }

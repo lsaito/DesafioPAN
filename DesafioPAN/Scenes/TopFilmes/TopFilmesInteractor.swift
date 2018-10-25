@@ -17,15 +17,35 @@ protocol TopFilmesInteractorProtocol {
 
 protocol TopFilmesDataStore {
     var currentPage: Int { get set }
+    var moviesList: [Movie]? { get set }
 }
 
 class TopFilmesInteractor: TopFilmesInteractorProtocol, TopFilmesDataStore {
     var worker: TopFilmesWorker?
     var presenter: TopFilmesPresenterProtocol?
+    private var isLoadingData: Bool = false
+    private var isOffline: Bool = false
     var currentPage: Int = 0
     var moviesList: [Movie]? = []
     
     func fetchTopFilmes(request: TopFilmes.DiscoverMovies.Request) {
+        if (!isLoadingData && !isOffline) {
+            requestTopFilmes(request: request, completionSuccess: {}, completionError: {})
+        }
+    }
+    
+    func refreshData(request: TopFilmes.DiscoverMovies.Request) {
+        self.currentPage = 0
+        self.moviesList?.removeAll()
+        
+        requestTopFilmes(request: request, completionSuccess: {
+            self.presenter?.endRefreshData()
+        }, completionError: {
+            self.presenter?.endRefreshData()
+        })
+    }
+    
+    private func requestTopFilmes(request: TopFilmes.DiscoverMovies.Request, completionSuccess: @escaping() -> Void, completionError: @escaping () -> Void) {
         let requestAPI = TheMovieDB.DiscoverMovie.Request.init(
             language: "en-US",
             sort_by: "popularity.desc",
@@ -35,9 +55,12 @@ class TopFilmesInteractor: TopFilmesInteractorProtocol, TopFilmesDataStore {
         )
         
         worker = TopFilmesWorker()
+        isLoadingData = true
         worker?.fetchDiscoverMovie(
             request: requestAPI,
             completionSuccess: { (responseAPI) in
+                self.isOffline = false
+                self.presenter?.hideOfflineMessage()
                 if (self.currentPage == 0) {
                     self.removeAllLocalMovies()
                 }
@@ -46,29 +69,27 @@ class TopFilmesInteractor: TopFilmesInteractorProtocol, TopFilmesDataStore {
                     if let movies = responseAPI.results {
                         self.saveLocalMovies(movies: movies)
                         self.moviesList?.append(contentsOf: movies)
+                        let response = TopFilmes.DiscoverMovies.Response.init(moviesList: self.moviesList)
+                        self.presenter?.presentFetchedTopFilmes(response: response)
                     }
                 }
-                let response = TopFilmes.DiscoverMovies.Response.init(isRefresh: request.isRefresh, moviesList: self.moviesList)
-                DispatchQueue.main.async {
-                    self.presenter?.presentFetchedTopFilmes(response: response)
-                }
+                completionSuccess()
+                self.isLoadingData = false
             },
             completionError: { (responseError) in
-                if let nsError: NSError = responseError as NSError? , nsError.code == -1009 {
-                    DispatchQueue.main.async {
-                        let response = TopFilmes.DiscoverMovies.Response.init(isRefresh: request.isRefresh, moviesList: self.getAllLocalMovies())
-                        self.presenter?.presentOfflineTopFilmes(response: response)
+                if let nsError: NSError = responseError as NSError? , nsError.code == -1009 { //off-line
+                    self.isOffline = true
+                    self.presenter?.presentOfflineMessage()
+                    if (requestAPI.page == 1) {
+                        self.moviesList = self.getAllLocalMovies()
+                        let response = TopFilmes.DiscoverMovies.Response.init(moviesList: self.moviesList)
+                        self.presenter?.presentFetchedTopFilmes(response: response)
                     }
                 }
+                completionError()
+                self.isLoadingData = false
             }
         )
-    }
-    
-    func refreshData(request: TopFilmes.DiscoverMovies.Request) {
-        self.currentPage = 0
-        self.moviesList?.removeAll()
-        
-        self.fetchTopFilmes(request: request)
     }
     
     private func saveLocalMovies(movies: [Movie]) {

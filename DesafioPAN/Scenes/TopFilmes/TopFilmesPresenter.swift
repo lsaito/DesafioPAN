@@ -10,7 +10,9 @@ import Foundation
 
 protocol TopFilmesPresenterProtocol {
     func presentFetchedTopFilmes(response: TopFilmes.DiscoverMovies.Response)
-    func presentOfflineTopFilmes(response: TopFilmes.DiscoverMovies.Response)
+    func presentOfflineMessage()
+    func hideOfflineMessage()
+    func endRefreshData()
 }
 
 class TopFilmesPresenter: TopFilmesPresenterProtocol {
@@ -29,31 +31,19 @@ class TopFilmesPresenter: TopFilmesPresenterProtocol {
                         )
                         moviesCollection?.append(movieItem)
                     }
-                    let viewModel = TopFilmes.DiscoverMovies.ViewModel.init(isRefresh: response.isRefresh, moviesCollection: moviesCollection)
+                    let viewModel = TopFilmes.DiscoverMovies.ViewModel.init(moviesCollection: moviesCollection)
                     self.viewController?.displayTopFilmes(viewModel: viewModel)
                 }
             })
         }
     }
-    
-    func presentOfflineTopFilmes(response: TopFilmes.DiscoverMovies.Response) {
-        var moviesCollection: [TopFilmes.MovieCollectionItem]? = []
-        
-        if let movies = response.moviesList {
-            TheMovieDB.shared.getConfiguration(completionHandler: { (configuration) in
-                if let configImg = configuration.images, let baseUrlImage = configImg.secure_base_url, let sizes = configImg.poster_sizes, let size = sizes.first {
-                    for movie in movies {
-                        let movieItem = TopFilmes.MovieCollectionItem.init(
-                            imageURL: baseUrlImage + size + (movie.poster_path ?? ""),
-                            title: movie.title ?? ""
-                        )
-                        moviesCollection?.append(movieItem)
-                    }
-                    let viewModel = TopFilmes.DiscoverMovies.ViewModel.init(isRefresh: response.isRefresh, moviesCollection: moviesCollection)
-                    self.viewController?.displayTopFilmes(viewModel: viewModel)
-                    self.viewController?.displayOfflineMessage()
-                }
-            })
-        }
+    func presentOfflineMessage() {
+        viewController?.displayOfflineMessage()
+    }
+    func hideOfflineMessage() {
+        viewController?.hideOfflineMessage()
+    }
+    func endRefreshData() {
+        viewController?.endRefreshData()
     }
 }

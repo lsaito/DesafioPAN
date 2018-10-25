@@ -18,7 +18,9 @@ class TopFilmesWorker {
         
         URLSession.shared.dataTask(with: request, completionHandler: { data, response, error -> Void in
             if let error = error {
-                completionError(error)
+                DispatchQueue.main.async {
+                    completionError(error)
+                }
             } else {
                 guard let data = data else { return }
                 do {
