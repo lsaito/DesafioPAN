@@ -26,9 +26,7 @@ class TopFilmesViewController: UIViewController {
     var interactor: TopFilmesInteractorProtocol?
     private var viewModel: TopFilmes.DiscoverMovies.ViewModel? {
         didSet {
-            DispatchQueue.main.async {
-                self.collectionView.reloadData()
-            }
+            self.collectionView.reloadData()
         }
     }
     private var isLoadingData: Bool = false
@@ -207,9 +205,7 @@ extension TopFilmesViewController: TopFilmesViewControllerProtocol {
         }
     }
     func displayOfflineMessage() {
-        DispatchQueue.main.async {
-            self.messageTopView.isHidden = false
-        }
+        self.messageTopView.isHidden = false
     }
     func filmeForIndexPath(indexPath: IndexPath) -> TopFilmes.MovieCollectionItem {
         return (viewModel?.moviesCollection?[(indexPath as IndexPath).row])!

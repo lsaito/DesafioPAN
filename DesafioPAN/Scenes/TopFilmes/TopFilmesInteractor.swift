@@ -49,12 +49,16 @@ class TopFilmesInteractor: TopFilmesInteractorProtocol, TopFilmesDataStore {
                     }
                 }
                 let response = TopFilmes.DiscoverMovies.Response.init(isRefresh: request.isRefresh, moviesList: self.moviesList)
-                self.presenter?.presentFetchedTopFilmes(response: response)
+                DispatchQueue.main.async {
+                    self.presenter?.presentFetchedTopFilmes(response: response)
+                }
             },
             completionError: { (responseError) in
                 if let nsError: NSError = responseError as NSError? , nsError.code == -1009 {
-                    let response = TopFilmes.DiscoverMovies.Response.init(isRefresh: request.isRefresh, moviesList: self.getAllLocalMovies())
-                    self.presenter?.presentOfflineTopFilmes(response: response)
+                    DispatchQueue.main.async {
+                        let response = TopFilmes.DiscoverMovies.Response.init(isRefresh: request.isRefresh, moviesList: self.getAllLocalMovies())
+                        self.presenter?.presentOfflineTopFilmes(response: response)
+                    }
                 }
             }
         )
