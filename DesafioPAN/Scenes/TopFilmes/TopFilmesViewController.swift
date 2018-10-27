@@ -16,8 +16,9 @@ protocol TopFilmesViewControllerProtocol: class {
 }
 
 private let reuseIdentifier = "FilmeCell"
-private let sectionInsets = UIEdgeInsets(top: 50.0, left: 20.0, bottom: 50.0, right: 20.0)
-private let itemsPerRow: CGFloat = 3
+private let sectionInsets = UIEdgeInsets(top: 20.0, left: 10.0, bottom: 20.0, right: 10.0)
+private let minItemsPerRow: Int = 3
+private let defaultCellSize: CGSize = CGSize(width: 100, height: 150)
 
 class TopFilmesViewController: UIViewController {
     
@@ -182,10 +183,17 @@ extension TopFilmesViewController: UICollectionViewDelegate {
 
 extension TopFilmesViewController: UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        let paddingSpace = sectionInsets.left * (itemsPerRow + 1)
-        let availableWidth = view.frame.width - paddingSpace
-        let widthPerItem = availableWidth / itemsPerRow
-        let heightPerItem = widthPerItem * (150 / 100)
+        let guide = view.safeAreaLayoutGuide
+        let contentWidth = guide.layoutFrame.size.width
+        let paddingSpace = sectionInsets.left * CGFloat(minItemsPerRow + 1)
+        let availableWidth = contentWidth - paddingSpace
+        var numItemsPerRow = Int(availableWidth / defaultCellSize.width)
+        if (numItemsPerRow < minItemsPerRow) {
+            numItemsPerRow = minItemsPerRow
+        }
+        
+        let widthPerItem = CGFloat(Int(availableWidth / CGFloat(numItemsPerRow)))
+        let heightPerItem = widthPerItem * (defaultCellSize.height / defaultCellSize.width)
         
         return CGSize(width: widthPerItem, height: heightPerItem)
     }
