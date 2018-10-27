@@ -24,6 +24,7 @@ class TopFilmesViewController: UIViewController {
     
     @IBOutlet weak var collectionView: UICollectionView!
     @IBOutlet weak var messageTopView: UIView!
+    @IBOutlet weak var searchInput: UITextField!
     
     var interactor: TopFilmesInteractorProtocol?
     private var viewModel: TopFilmes.DiscoverMovies.ViewModel? {
@@ -70,6 +71,7 @@ class TopFilmesViewController: UIViewController {
 //        self.collectionView!.register(FilmeCell.self, forCellWithReuseIdentifier: reuseIdentifier)
 
         // Do any additional setup after loading the view.
+        self.title = "Top Filmes"
         setupCollectionView()
     }
     
@@ -88,13 +90,12 @@ class TopFilmesViewController: UIViewController {
     
     @objc private func refreshData(_ sender: Any) {
         // Fetch Data
-        let request = TopFilmes.DiscoverMovies.Request.init()
-        interactor?.refreshData(request: request)
+        self.searchInput.text = ""
+        interactor?.refreshData()
     }
     
     private func loadTopFilmes() {
-        let request = TopFilmes.DiscoverMovies.Request.init()
-        interactor?.fetchTopFilmes(request: request)
+        interactor?.fetchTopFilmes()
     }
 
     /*
@@ -195,6 +196,33 @@ extension TopFilmesViewController: UICollectionViewDelegateFlowLayout {
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
         return sectionInsets.left
+    }
+}
+
+extension TopFilmesViewController: UITextFieldDelegate {
+    func textFieldDidBeginEditing(_ textField: UITextField) {
+        if (textField.text == "Buscar") {
+            textField.text = ""
+        }
+    }
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        if let searchText = textField.text {
+            let request = TopFilmes.DiscoverMovies.Request.init(searchString: searchText)
+            interactor?.searchFilmes(request: request)
+        }
+        return true
+    }
+    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
+        if let text = textField.text, let textRange = Range(range, in: text) {
+            let updatedText = text.replacingCharacters(in: textRange, with: string)
+            let request = TopFilmes.DiscoverMovies.Request.init(searchString: updatedText)
+            interactor?.searchFilmes(request: request)
+        }
+        return true
+    }
+    func textFieldShouldClear(_ textField: UITextField) -> Bool {
+        interactor?.endSearch()
+        return true
     }
 }
 

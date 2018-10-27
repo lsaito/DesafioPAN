@@ -18,7 +18,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="yID-nK-9SX">
-                                <rect key="frame" x="0.0" y="64" width="375" height="603"/>
+                                <rect key="frame" x="0.0" y="114" width="375" height="553"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <collectionViewFlowLayout key="collectionViewLayout" minimumLineSpacing="10" minimumInteritemSpacing="10" id="TXw-RJ-DOo">
                                     <size key="itemSize" width="100" height="150"/>
@@ -81,7 +81,7 @@
                                 </connections>
                             </collectionView>
                             <view hidden="YES" alpha="0.69999999999999996" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="eOI-yI-8YK">
-                                <rect key="frame" x="0.0" y="64" width="375" height="50"/>
+                                <rect key="frame" x="0.0" y="114" width="375" height="50"/>
                                 <subviews>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Sem conexão no momento, mostrando dados off-line" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumFontSize="14" translatesAutoresizingMaskIntoConstraints="NO" id="3um-1x-Jbw">
                                         <rect key="frame" x="8" y="8" width="359" height="34"/>
@@ -99,23 +99,50 @@
                                     <constraint firstItem="3um-1x-Jbw" firstAttribute="top" secondItem="eOI-yI-8YK" secondAttribute="top" constant="8" id="p2e-Bs-I6A"/>
                                 </constraints>
                             </view>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="R4h-Sg-aSE" userLabel="Search Input View">
+                                <rect key="frame" x="0.0" y="64" width="375" height="50"/>
+                                <subviews>
+                                    <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" text="Buscar" borderStyle="roundedRect" textAlignment="center" minimumFontSize="17" clearButtonMode="whileEditing" translatesAutoresizingMaskIntoConstraints="NO" id="GlE-9u-Mdd">
+                                        <rect key="frame" x="20" y="10" width="335" height="30"/>
+                                        <nil key="textColor"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                        <textInputTraits key="textInputTraits" returnKeyType="search"/>
+                                        <connections>
+                                            <outlet property="delegate" destination="vDN-pv-oWd" id="XW6-Au-0kf"/>
+                                        </connections>
+                                    </textField>
+                                </subviews>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="50" id="2Sn-fm-4gG"/>
+                                    <constraint firstItem="GlE-9u-Mdd" firstAttribute="centerY" secondItem="R4h-Sg-aSE" secondAttribute="centerY" id="Ods-Bg-NSw"/>
+                                    <constraint firstAttribute="trailing" secondItem="GlE-9u-Mdd" secondAttribute="trailing" constant="20" id="eVF-sN-dsJ"/>
+                                    <constraint firstItem="GlE-9u-Mdd" firstAttribute="leading" secondItem="R4h-Sg-aSE" secondAttribute="leading" constant="20" id="hJg-zJ-eNo"/>
+                                </constraints>
+                            </view>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
+                            <constraint firstItem="6eU-w6-ywG" firstAttribute="trailing" secondItem="R4h-Sg-aSE" secondAttribute="trailing" id="CVn-Om-a0c"/>
                             <constraint firstItem="eOI-yI-8YK" firstAttribute="leading" secondItem="6eU-w6-ywG" secondAttribute="leading" id="Ev2-oq-BrB"/>
+                            <constraint firstItem="R4h-Sg-aSE" firstAttribute="leading" secondItem="6eU-w6-ywG" secondAttribute="leading" id="Kzx-nw-vae"/>
                             <constraint firstItem="eOI-yI-8YK" firstAttribute="trailing" secondItem="6eU-w6-ywG" secondAttribute="trailing" id="M8X-FE-t3e"/>
                             <constraint firstItem="yID-nK-9SX" firstAttribute="leading" secondItem="6eU-w6-ywG" secondAttribute="leading" id="O6F-yU-h1o"/>
                             <constraint firstItem="6eU-w6-ywG" firstAttribute="trailing" secondItem="yID-nK-9SX" secondAttribute="trailing" id="PfR-fC-4GK"/>
-                            <constraint firstItem="yID-nK-9SX" firstAttribute="top" secondItem="6eU-w6-ywG" secondAttribute="top" id="R5X-QM-G79"/>
-                            <constraint firstItem="eOI-yI-8YK" firstAttribute="top" secondItem="6eU-w6-ywG" secondAttribute="top" id="ucp-K4-HE2"/>
+                            <constraint firstItem="eOI-yI-8YK" firstAttribute="top" secondItem="R4h-Sg-aSE" secondAttribute="bottom" id="R1c-Va-eRx"/>
+                            <constraint firstItem="yID-nK-9SX" firstAttribute="top" secondItem="R4h-Sg-aSE" secondAttribute="bottom" id="TRi-vs-a4m"/>
+                            <constraint firstItem="R4h-Sg-aSE" firstAttribute="top" secondItem="6eU-w6-ywG" secondAttribute="top" id="fnw-cE-gca"/>
                             <constraint firstItem="6eU-w6-ywG" firstAttribute="bottom" secondItem="yID-nK-9SX" secondAttribute="bottom" id="z5y-g8-N5n"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="6eU-w6-ywG"/>
                     </view>
-                    <navigationItem key="navigationItem" id="SyR-1c-qI7"/>
+                    <navigationItem key="navigationItem" id="SyR-1c-qI7">
+                        <nil key="title"/>
+                    </navigationItem>
                     <connections>
                         <outlet property="collectionView" destination="yID-nK-9SX" id="JGh-yf-JVm"/>
                         <outlet property="messageTopView" destination="eOI-yI-8YK" id="TE7-hP-zJZ"/>
+                        <outlet property="searchInput" destination="GlE-9u-Mdd" id="Wbs-vl-I1R"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="qin-xn-CzA" userLabel="First Responder" sceneMemberID="firstResponder"/>

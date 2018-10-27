@@ -11,8 +11,10 @@ import UIKit
 import CoreData
 
 protocol TopFilmesInteractorProtocol {
-    func fetchTopFilmes(request: TopFilmes.DiscoverMovies.Request)
-    func refreshData(request: TopFilmes.DiscoverMovies.Request)
+    func fetchTopFilmes()
+    func refreshData()
+    func searchFilmes(request: TopFilmes.DiscoverMovies.Request)
+    func endSearch()
 }
 
 protocol TopFilmesDataStore {
@@ -25,27 +27,57 @@ class TopFilmesInteractor: TopFilmesInteractorProtocol, TopFilmesDataStore {
     var presenter: TopFilmesPresenterProtocol?
     private var isLoadingData: Bool = false
     private var isOffline: Bool = false
+    private var isSearching: Bool = false
     var currentPage: Int = 0
     var moviesList: [Movie]? = []
     
-    func fetchTopFilmes(request: TopFilmes.DiscoverMovies.Request) {
-        if (!isLoadingData && !isOffline) {
-            requestTopFilmes(request: request, completionSuccess: {}, completionError: {})
+    func fetchTopFilmes() {
+        if (!isLoadingData && !isOffline && !isSearching) {
+            requestTopFilmes(completionSuccess: {}, completionError: {})
         }
     }
     
-    func refreshData(request: TopFilmes.DiscoverMovies.Request) {
+    func refreshData() {
         self.currentPage = 0
         self.moviesList?.removeAll()
+        self.isSearching = false
         
-        requestTopFilmes(request: request, completionSuccess: {
+        requestTopFilmes(completionSuccess: {
             self.presenter?.endRefreshData()
         }, completionError: {
             self.presenter?.endRefreshData()
         })
     }
     
-    private func requestTopFilmes(request: TopFilmes.DiscoverMovies.Request, completionSuccess: @escaping() -> Void, completionError: @escaping () -> Void) {
+    func searchFilmes(request: TopFilmes.DiscoverMovies.Request) {
+        self.isSearching = true
+        
+        if let searchSring = request.searchString {
+            if (searchSring == "") {
+                self.endSearch()
+            } else {
+                let resultSearch = moviesList?.filter({ (movie) -> Bool in
+                    if let title = movie.title {
+                        let stringMatch = title.range(of: searchSring, options: .caseInsensitive)
+                        return stringMatch != nil ? true : false
+                    }
+                    return false
+                })
+                
+                let response = TopFilmes.DiscoverMovies.Response.init(moviesList: resultSearch)
+                self.presenter?.presentFetchedTopFilmes(response: response)
+            }
+        }
+    }
+    
+    func endSearch() {
+        self.isSearching = false
+        
+        let response = TopFilmes.DiscoverMovies.Response.init(moviesList: self.moviesList)
+        self.presenter?.presentFetchedTopFilmes(response: response)
+    }
+    
+    private func requestTopFilmes(completionSuccess: @escaping() -> Void, completionError: @escaping () -> Void) {
         let requestAPI = TheMovieDB.DiscoverMovie.Request.init(
             language: "en-US",
             sort_by: "popularity.desc",

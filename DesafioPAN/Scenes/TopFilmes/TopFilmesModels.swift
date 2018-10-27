@@ -11,6 +11,7 @@ import Foundation
 enum TopFilmes {
     enum DiscoverMovies {
         struct Request {
+            let searchString: String?
         }
         
         struct Response {
