@@ -23,11 +23,13 @@ class TopFilmesPresenter: TopFilmesPresenterProtocol {
         
         if let movies = response.moviesList {
             TheMovieDB.shared.getConfiguration(completionHandler: { (configuration) in
-                if let configImg = configuration.images, let baseUrlImage = configImg.secure_base_url, let sizes = configImg.poster_sizes, let size = sizes.first {
+                if let configImg = configuration.images, let baseUrlImage = configImg.secure_base_url, let sizes = configImg.poster_sizes, let sizeThumb = sizes.first {
                     for movie in movies {
                         let movieItem = TopFilmes.MovieCollectionItem.init(
-                            imageURL: baseUrlImage + size + (movie.poster_path ?? ""),
-                            title: movie.title
+                            title: movie.title,
+                            imageThumbURL: baseUrlImage + sizeThumb + (movie.poster_path ?? ""),
+                            imageDetalheURL: baseUrlImage + sizes[3] + (movie.poster_path ?? ""),
+                            overview: movie.overview
                         )
                         moviesCollection?.append(movieItem)
                     }

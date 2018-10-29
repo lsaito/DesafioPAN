@@ -22,7 +22,6 @@ private let defaultCellSize: CGSize = CGSize(width: 100, height: 150)
 
 class TopFilmesViewController: UIViewController {
     
-    
     @IBOutlet weak var collectionView: UICollectionView!
     @IBOutlet weak var messageTopView: UIView!
     @IBOutlet weak var searchInput: UITextField!
@@ -33,6 +32,7 @@ class TopFilmesViewController: UIViewController {
             self.collectionView.reloadData()
         }
     }
+    private var selectedFilme: TopFilmes.MovieCollectionItem?
     private let refreshControl = UIRefreshControl()
     
     // MARK: Object lifecycle
@@ -98,16 +98,18 @@ class TopFilmesViewController: UIViewController {
     private func loadTopFilmes() {
         interactor?.fetchTopFilmes()
     }
-
-    /*
+    
     // MARK: - Navigation
 
     // In a storyboard-based application, you will often want to do a little preparation before navigation
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         // Get the new view controller using [segue destinationViewController].
         // Pass the selected object to the new view controller.
+        let detalheViewController: DetalheFilmeViewController = segue.destination as! DetalheFilmeViewController
+        if let filme = self.selectedFilme {
+            detalheViewController.setupDetalheFilme(filme: filme)
+        }
     }
-    */
 }
 
 extension TopFilmesViewController: UICollectionViewDataSource {
@@ -129,7 +131,7 @@ extension TopFilmesViewController: UICollectionViewDataSource {
         
         // Configure the cell
         let filmeCollection = self.filmeForIndexPath(indexPath: indexPath)
-        cell.imageView.loadImageUsingCache(withUrl: filmeCollection.imageURL)
+        cell.imageView.loadImageUsingCache(withUrl: filmeCollection.imageThumbURL)
         cell.titleLabel.text = filmeCollection.title
         
         return cell
@@ -178,6 +180,11 @@ extension TopFilmesViewController: UICollectionViewDelegate {
                 loadTopFilmes()
             }
         }
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        self.selectedFilme = filmeForIndexPath(indexPath: indexPath)
+        self.performSegue(withIdentifier: "DetalheFilme", sender: self)
     }
 }
 
