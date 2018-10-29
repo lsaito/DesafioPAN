@@ -23,7 +23,7 @@ protocol TopFilmesDataStore {
 }
 
 class TopFilmesInteractor: TopFilmesInteractorProtocol, TopFilmesDataStore {
-    var worker: TopFilmesWorker?
+    var worker: TopFilmesWorker? = TopFilmesWorker()
     var presenter: TopFilmesPresenterProtocol?
     private var isLoadingData: Bool = false
     private var isOffline: Bool = false
@@ -86,7 +86,6 @@ class TopFilmesInteractor: TopFilmesInteractorProtocol, TopFilmesDataStore {
             page: currentPage + 1
         )
         
-        worker = TopFilmesWorker()
         isLoadingData = true
         worker?.fetchDiscoverMovie(
             request: requestAPI,

@@ -12,7 +12,7 @@
         <!--Top Filmes View Controller-->
         <scene sceneID="AZ6-NC-QZm">
             <objects>
-                <viewController id="vDN-pv-oWd" customClass="TopFilmesViewController" customModule="DesafioPAN" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="TopFilmesViewController" id="vDN-pv-oWd" customClass="TopFilmesViewController" customModule="DesafioPAN" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="n9c-9T-Kcm">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
